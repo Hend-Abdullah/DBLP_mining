@@ -5,11 +5,11 @@ import pandas as pd
 import numpy as np
 import xml.etree.ElementTree as et
 #import plotly.graph_objects as go
-from fpgrowth_py.utils import *
+#from fpgrowth_py.utils import *
 import networkx as nx
 import matplotlib.pyplot as plt
 from mlxtend.preprocessing import TransactionEncoder
-from mlxtend.frequent_patterns import fpgrowth
+#from mlxtend.frequent_patterns import fpgrowth
 
 #read dblp dataset
 xtree = et.parse("subset1000(withSymbol).xml")
