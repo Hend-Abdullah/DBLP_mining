@@ -4,7 +4,7 @@ from PIL import Image
 import pandas as pd
 import numpy as np
 import xml.etree.ElementTree as et
-import Plotly from 'plotly.js-dist-min'
+import Plotly 
 #read dblp dataset
 xtree = et.parse("subset1000(withSymbol).xml")
 xroot = xtree.getroot()
