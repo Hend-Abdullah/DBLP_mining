@@ -4,7 +4,7 @@ from PIL import Image
 import pandas as pd
 import numpy as np
 import xml.etree.ElementTree as et
-import plotly.graph_objects
+import plotly.graph_objects as go
 from fpgrowth_py.utils import *
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -137,10 +137,10 @@ if rad =="Career Path":
 	#Return all years
 	Year = list(article_data.keys())
 	#Visualize the career path of the input author
-	fig1 = Figure(Bar(x=Year, y=list(article_data.values()) ,  marker_color='blue',name='Articles',width=0.6))
-	fig1.add_trace(Bar(x=Year, y=list(book_data.values()),marker_color='lightblue', name='Books',width=0.6))
-	fig1.add_trace(Bar(x=Year, y=list(proceedings_data.values()),marker_color='green', name='Proceedings',width=0.6))
-	fig1.add_trace(Bar(x=Year, y=list(others_data.values()),marker_color='lightslategrey', name='Others',width=0.6))
+	fig1 = go.Figure(go.Bar(x=Year, y=list(article_data.values()) ,  marker_color='blue',name='Articles',width=0.6))
+	fig1.add_trace(go.Bar(x=Year, y=list(book_data.values()),marker_color='lightblue', name='Books',width=0.6))
+	fig1.add_trace(go.Bar(x=Year, y=list(proceedings_data.values()),marker_color='green', name='Proceedings',width=0.6))
+	fig1.add_trace(go.Bar(x=Year, y=list(others_data.values()),marker_color='lightslategrey', name='Others',width=0.6))
 	fig1.update_layout(barmode='stack',  title='Career Path',
     	title_x=0.5,
     	font_family="sans-serif",
@@ -163,7 +163,7 @@ if rad =="Top Ten Journal":
 	top=dblp_df[((dblp_df.Year>='1990')& (dblp_df.Type=='article'))].Journal_Name
 	top_10=top.value_counts()[:10].sort_values(ascending=False)
 	#Visualize top ten journals
-	fig2 = Figure(Bar(x=top_10.values,y=top_10.index,orientation='h'))
+	fig2 = go.Figure(go.Bar(x=top_10.values,y=top_10.index,orientation='h'))
 	fig2.update_layout(
     	title='Top ten journals',
     	title_x=0.5,
@@ -181,8 +181,4 @@ if rad =="Top Ten Journal":
         titlefont_size=16,
         tickfont_size=14,))
 	st.plotly_chart(fig2)
-
-
-
-
 
