@@ -137,12 +137,10 @@ if rad =="Career Path":
 	#Return all years
 	Year = list(article_data.keys())
 	#Visualize the career path of the input author
-       	st.write("co-author")
 
 if rad =="Top Ten Journal":
 	#Top ten journal
 	top=dblp_df[((dblp_df.Year>='1990')& (dblp_df.Type=='article'))].Journal_Name
 	top_10=top.value_counts()[:10].sort_values(ascending=False)
 	#Visualize top ten journals
-	st.write("co-author")
 
