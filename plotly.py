@@ -1,1 +1,1 @@
-$pip install plotly==5.6.0
+pip install plotly==5.6.0
