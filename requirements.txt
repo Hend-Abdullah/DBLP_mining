@@ -4,14 +4,6 @@
 #
 #    pip-compile
 #
-matplotlib==3.2.1
-numpy==1.18.5
+
 pip install plotly==5.6.0
-pandas==1.0.4
-python-dateutil==2.8.1    # via matplotlib, pandas
 
-
-#change link
-PyYAML==3.12
-requests==2.18.4
-urllib3==1.22
