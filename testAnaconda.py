@@ -6,6 +6,7 @@ import numpy as np
 import xml.etree.ElementTree as et
 import plotly.graph_objects as go
 import networkx as nx
+from mlxtend.preprocessing import TransactionEncoder
 #read dblp dataset
 xtree = et.parse("subset1000(withSymbol).xml")
 xroot = xtree.getroot()
