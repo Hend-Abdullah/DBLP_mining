@@ -4,7 +4,6 @@ from PIL import Image
 import pandas as pd
 import numpy as np
 import xml.etree.ElementTree as et
-currentmodule:: plotly.graph_objs
 import plotly.graph_objects as go
 #read dblp dataset
 xtree = et.parse("subset1000(withSymbol).xml")
