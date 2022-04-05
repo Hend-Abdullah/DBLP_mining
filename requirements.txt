@@ -7,5 +7,4 @@
 
 #plotly==5.6.0
 #networkx
-mlxtend.preprocessing
-mlxtend.frequent_patterns
+mlxtend.preprocessing import TransactionEncoder
