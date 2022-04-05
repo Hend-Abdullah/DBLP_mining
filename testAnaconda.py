@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 import networkx as nx
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import fpgrowth
+from mlxtend.frequent_patterns import fpcommon as fpc
 #read dblp dataset
 xtree = et.parse("subset1000(withSymbol).xml")
 xroot = xtree.getroot()
