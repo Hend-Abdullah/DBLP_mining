@@ -312,4 +312,4 @@ if rad =="Top Ten Journal":
         font_color="black",
         xaxis=dict(
             title='Number of Publication',))
-    st.plotly_chart(fig2)
+    st.plotly_chart(fig2, use_container_width=True)
