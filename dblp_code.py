@@ -309,8 +309,6 @@ if rad =="Top Ten Journal":
         font_family="sans-serif",
         font_size=14,
         font_color="black",
-        yaxis=dict(
-            title='journal name',),
         xaxis=dict(
             title='Number of Publication',))
     st.plotly_chart(fig2)
