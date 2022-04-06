@@ -196,7 +196,7 @@ st.set_page_config(layout="wide")
 image = Image.open('CSM.jpg')
 st.image(image, width = 200)
 st.title(""" Who are CS miner""")
-st.text("# Is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals")
+st.text("Is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals")
 
 col1 = st.sidebar
 col2, col3 = st.columns((2,1))
