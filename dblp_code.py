@@ -6,7 +6,6 @@ import itertools
 import numpy as np
 import xml.etree.ElementTree as et
 import plotly.graph_objects as go
-#from fpgrowth_py.utils import *
 import networkx as nx
 import matplotlib.pyplot as plt
 from mlxtend.preprocessing import TransactionEncoder
@@ -194,7 +193,7 @@ coauthor_df['Common'] = co_authoring['common'].values
 ## Page expands to full width
 st.set_page_config(layout="wide")
 #add logo
-image = Image.open('logo.jpg')
+image = Image.open('CSM.jpg')
 st.image(image, width = 500)
 st.write("""# Professional Bibliographic Visualization Tool""")
 st.write("""Description of the system will be here""")
