@@ -194,7 +194,7 @@ coauthor_df['Common'] = co_authoring['common'].values
 st.set_page_config(layout="wide")
 #add logo
 image = Image.open('CSM.jpg')
-st.image(image, width = 500)
+st.image(image, width = 300)
 st.write("""# Professional Bibliographic Visualization Tool""")
 st.write("""Description of the system will be here""")
 
