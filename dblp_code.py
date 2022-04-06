@@ -274,8 +274,8 @@ if rad =="Career Path":
         titlefont_size=16,
         tickfont_size=14,
     categoryorder='category ascending'))
-    st.plotly_chart(fig1)
-
+    st.plotly_chart(fig1, use_container_width=True)
+    
 if rad =="Top Ten Journal":
     #Top ten journal
     top=dblp_df[((dblp_df.Year>='1990')& (dblp_df.Type=='article'))].Journal_Name
