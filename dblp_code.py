@@ -197,13 +197,13 @@ image = Image.open('CSM.jpg')
 st.image(image, width = 200)
 #st.write("""# Professional Bibliographic Visualization Tool""")
 st.write("""# Who are CS miner""")
-st.write(""is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals"")
+st.write("""is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals""")
 
 col1 = st.sidebar
 col2, col3 = st.columns((2,1))
 
 # Sidebar + Main panel
-col1.header(''#Select Options'')
+col1.header("#Select Options")
 
 rad =st.sidebar.radio("",["Career Path","Co-author","Top Ten Journal"])
 if rad =="Co-author":
@@ -211,7 +211,7 @@ if rad =="Co-author":
 if rad =="Career Path":
     #get input from user
     col_one_list = total_pub_df['Authors'].tolist()
-    author_name = st.selectbox(''#Select Author Name'', col_one_list)
+    author_name = st.selectbox("#Select Author Name", col_one_list)
     #Get all index in publication_df
     index = publication_df.index
     #Find index for input author
