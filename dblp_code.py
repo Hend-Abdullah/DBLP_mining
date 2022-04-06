@@ -6,7 +6,7 @@ import itertools
 import numpy as np
 import xml.etree.ElementTree as et
 import plotly.graph_objects as go
-from fpgrowth_py.utils import *
+#from fpgrowth_py.utils import *
 import networkx as nx
 import matplotlib.pyplot as plt
 from mlxtend.preprocessing import TransactionEncoder
