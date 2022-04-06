@@ -8,5 +8,5 @@
 #plotly==5.6.0
 #networkx
 #mlxtend
-
+pyvis
 
