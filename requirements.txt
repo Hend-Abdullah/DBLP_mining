@@ -5,8 +5,8 @@
 #    pip-compile
 #
 
-#plotly==5.6.0
-#networkx
-#mlxtend
+plotly
+networkx
+mlxtend
 pyvis
 
