@@ -196,6 +196,7 @@ st.set_page_config(layout="wide")
 image = Image.open('CSM.jpg')
 st.image(image, width = 200)
 #st.write("""# Professional Bibliographic Visualization Tool""")
+st.write("""# Who are CS miner""")
 st.write("""CS miner is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals""")
 
 col1 = st.sidebar
