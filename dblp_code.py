@@ -7,6 +7,7 @@ import numpy as np
 import xml.etree.ElementTree as et
 import plotly.graph_objects as go
 import networkx as nx
+from pyvis.network import Network
 import matplotlib.pyplot as plt
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import fpgrowth
@@ -193,8 +194,8 @@ coauthor_df['Common'] = co_authoring['common'].values
 ## Page expands to full width
 st.set_page_config(layout="wide")
 #add logo
-#image = Image.open('CSminer.png')
-#st.image(image, width = 200)
+image = Image.open('CSminer.png')
+st.image(image, width = 200)
 st.title(""" Who are CS miner""")
 st.subheader("Is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals.")
 
@@ -220,8 +221,6 @@ if rad =="Co-author":
 
     coauthor_list = coauthor_list1+ coauthor_list2
     common_list = common_list1+ common_list2
-
-    from pyvis.network import Network
 
     net = Network()
     net.add_node(0,label=name )
