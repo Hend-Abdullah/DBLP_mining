@@ -257,9 +257,9 @@ if rad =="Career Path":
     #Return all years
     Year = list(article_data.keys())
     #Visualize the career path of the input author
-    fig1 = go.Figure(go.Bar(x=Year, y=list(article_data.values()) ,  marker_color='blue',name='Articles',width=0.6))
+    fig1 = go.Figure(go.Bar(x=Year, y=list(article_data.values()) ,  marker_color='lightorange',name='Articles',width=0.6))
     fig1.add_trace(go.Bar(x=Year, y=list(book_data.values()),marker_color='lightblue', name='Books',width=0.6))
-    fig1.add_trace(go.Bar(x=Year, y=list(proceedings_data.values()),marker_color='green', name='Proceedings',width=0.6))
+    fig1.add_trace(go.Bar(x=Year, y=list(proceedings_data.values()),marker_color='lightgreen', name='Proceedings',width=0.6))
     fig1.add_trace(go.Bar(x=Year, y=list(others_data.values()),marker_color='lightslategrey', name='Others',width=0.6))
     fig1.update_layout(barmode='stack',  title='Career Path',
         title_x=0.5,
