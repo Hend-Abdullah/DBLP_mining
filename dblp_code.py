@@ -294,7 +294,7 @@ if rad =="Top Ten Journal":
 
     fig2 = go.Figure(data=[go.Scatter(
         x=top_10.values,
-        y=[1,2,3,4,5,6,7,8,9,10],
+        y=[-100,-44,-22,-11,-5,0,4,7,9,10],
         text=information,
         mode='markers',
         marker=dict(
