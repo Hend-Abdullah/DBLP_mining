@@ -9,12 +9,4 @@
 #networkx
 #mlxtend
 
-#PIL
-pandas
-#math
-itertools
-numpy
-xml
-fpgrowth_py
-matplotlib
-mlxtend
+
