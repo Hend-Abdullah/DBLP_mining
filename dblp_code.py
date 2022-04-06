@@ -232,11 +232,9 @@ if rad =="Career Path":
         font_family="sans-serif",
         font_size=14,
         font_color="black",
-        title_font_family="sans-serif",
-        title_font_color="black",
         yaxis=dict(
         title='Number Of Publication',
-        titlefont_size=16,
+        titlefont_size=14,
         tickfont_size=14,),
         xaxis=dict(
         titlefont_size=16,
