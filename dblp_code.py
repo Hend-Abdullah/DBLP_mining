@@ -206,7 +206,35 @@ col1.header(" Select an Option")
 
 rad =st.sidebar.radio("",["Career Path","Co-author","Top Ten Journal"])
 if rad =="Co-author":
-    st.write("co-author")
+    #get input from user
+    col_one_list = total_pub_df['Authors'].tolist()
+    author_name = st.selectbox("""Select Author Name""", col_one_list)
+    coauthor_list = []
+    common_list = []
+
+    coauthor_list1 = coauthor_df[(coauthor_df['Author1'] == name)].Author2.values.tolist()
+    common_list1 = coauthor_df[(coauthor_df['Author1'] == name)].Common.values.tolist()
+
+    coauthor_list2 = coauthor_df[(coauthor_df['Author2'] == name)].Author1.values.tolist()
+    common_list2= coauthor_df[(coauthor_df['Author2'] == name)].Common.values.tolist()
+
+    coauthor_list = coauthor_list1+ coauthor_list2
+    common_list = common_list1+ common_list2
+
+    from pyvis.network import Network
+
+    net = Network()
+    net.add_node(0,label=name )
+    net.add_nodes([i for i in range(1,len(coauthor_list)+1)], 
+              label=coauthor_list,
+              color= ['blue' for i in range(len(coauthor_list))], 
+              title = [('# common publications: %d'%i) for i in common_list],
+              size= (np.array(common_list)*20).tolist() )
+
+    net.add_edges([(0,i) for i in range(1,len(coauthor_list)+1)])
+    net.repulsion(node_distance=90, spring_length=200)
+    net.show('edges_with_weights.html')
+    
 if rad =="Career Path":
     #get input from user
     col_one_list = total_pub_df['Authors'].tolist()
