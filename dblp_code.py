@@ -14,7 +14,7 @@ from mlxtend.frequent_patterns import fpgrowth
 from mlxtend.frequent_patterns import fpcommon as fpc
 
 #read dblp dataset
-xtree = et.parse("subset1000(withSymbol).xml")
+xtree = et.parse("subset10000(withSymbol).xml")
 xroot = xtree.getroot()
 #Publications less than 30 authors
 rows = []
@@ -287,10 +287,10 @@ if rad =="Top Ten Journal":
             'Name:'+top_10.index[3]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
             'Name:'+top_10.index[4]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
             'Name:'+top_10.index[5]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[0]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[0]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[0]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[0]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1']
+            'Name:'+top_10.index[6]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[7]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[8]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[9]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1']
 
     fig2 = go.Figure(data=[go.Scatter(
         x=top_10.values,
