@@ -221,7 +221,11 @@ if rad =="Co-author":
 
     coauthor_list = coauthor_list1+ coauthor_list2
     common_list = common_list1+ common_list2
-
+    
+    HtmlFile = open("test.html", 'r', encoding='utf-8')
+    source_code = HtmlFile.read() 
+    components.html(source_code, height = 900,width=900)
+    
     net = Network()
     net.add_node(0,label=name )
     net.add_nodes([i for i in range(1,len(coauthor_list)+1)], 
@@ -232,8 +236,10 @@ if rad =="Co-author":
 
     net.add_edges([(0,i) for i in range(1,len(coauthor_list)+1)])
     net.repulsion(node_distance=90, spring_length=200)
-    #net.show('edges_with_weights.html')
-    st.plotly_chart(net)
+    net.show('test.html')
+    from IPython.core.display import display, HTML
+    display(HTML('test.html'))
+
 if rad =="Career Path":
     #get input from user
     col_one_list = total_pub_df['Authors'].tolist()
