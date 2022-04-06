@@ -232,8 +232,8 @@ if rad =="Co-author":
 
     net.add_edges([(0,i) for i in range(1,len(coauthor_list)+1)])
     net.repulsion(node_distance=90, spring_length=200)
-    net.show('edges_with_weights.html')
-    
+    #net.show('edges_with_weights.html')
+    st.plotly_chart(net)
 if rad =="Career Path":
     #get input from user
     col_one_list = total_pub_df['Authors'].tolist()
