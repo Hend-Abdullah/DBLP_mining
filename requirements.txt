@@ -11,7 +11,7 @@
 
 #PIL
 pandas
-math
+#math
 itertools
 numpy
 xml
