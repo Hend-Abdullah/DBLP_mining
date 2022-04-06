@@ -5,7 +5,16 @@
 #    pip-compile
 #
 
-plotly==5.6.0
-networkx
+#plotly==5.6.0
+#networkx
+#mlxtend
+
+PIL
+pandas
+math
+itertools
+numpy
+xml
+fpgrowth_py
+matplotlib
 mlxtend
-#.preprocessing import TransactionEncoder
