@@ -276,44 +276,36 @@ if rad =="Top Ten Journal":
     top_10=top.value_counts()[:10].sort_values(ascending=False)
 
     #Visualize top ten journals
-    import plotly.graph_objects as go
     information=['Name:'+top_10.index[0]+'<br>Impact Factor: 11'+'<br>Quadratic: Q1'
              ,'Name:'+top_10.index[1]+'<br>Impact Factor: 11'+'<br>Quadratic: Q1',
-    'Name:'+top_10.index[2]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-    'Name:'+top_10.index[3]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-    'Name:'+top_10.index[4]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-    'Name:'+top_10.index[5]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-    'Name:'+top_10.index[6]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-    'Name:'+top_10.index[7]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-    'Name:'+top_10.index[8]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-    'Name:'+top_10.index[9]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1']
+            'Name:'+top_10.index[2]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[3]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[4]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[5]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[6]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[7]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[8]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
+            'Name:'+top_10.index[9]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1']
 
-    fig = go.Figure(data=[go.Scatter(
-    x=top_10.values,
-    y=[1,2,3,4,5,6,7,8,9,10],
-    text=information,
-    mode='markers',
-    marker=dict(
+    fig2 = go.Figure(data=[go.Scatter(
+        x=top_10.values,
+        y=[1,2,3,4,5,6,7,8,9,10],
+        text=information,
+        mode='markers',
+        marker=dict(
         #Impact factor 
-        color=[23.5, 26.9, 44, 66, 66, 44,20,30.5,40.9,51.7],
-        size=top_10.values/20,
-        showscale=True
+        color=['Navy','MediumBlue','Blue','CornflowerBlue','DodgerBlue', 'LightSkyBlue','LightBlue', 'LightSteelBlue','silver','lightgray'],
+        size=top_10.values/20
         )
-)])
-    fig.update_layout(
-    title='Top Ten Journals',
-    title_x=0.5,
-    font_family="sans serif",
-    font_size=14,
-    font_color="black",
-    title_font_family="sans serif",
-    title_font_color="black",
-    yaxis=dict(
-        title='journal name',
-        titlefont_size=16,
-        tickfont_size=14,),
-     xaxis=dict(
-        title='Number Of Publication',
-        titlefont_size=16,
-        tickfont_size=14,))
+        )])
+    fig2.update_layout(
+        title='Top Ten Journals',
+        title_x=0.5,
+        font_family="sans-serif",
+        font_size=14,
+        font_color="black",
+        yaxis=dict(
+            title='journal name',),
+        xaxis=dict(
+            title='Number of Publication',))
     st.plotly_chart(fig2)
