@@ -194,7 +194,7 @@ coauthor_df['Common'] = co_authoring['common'].values
 st.set_page_config(layout="wide")
 #add logo
 image = Image.open('CSminer.png')
-st.image(image, width = 200)
+st.image(image, width = 200, height=200)
 st.title(""" Who are CS miner""")
 st.subheader("Is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals.")
 
