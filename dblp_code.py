@@ -195,7 +195,7 @@ st.set_page_config(layout="wide")
 #add logo
 image = Image.open('CSM.jpg')
 st.image(image, width = 200)
-st.write("""# Professional Bibliographic Visualization Tool""")
+#st.write("""# Professional Bibliographic Visualization Tool""")
 st.write("""Description of the system will be here""")
 
 col1 = st.sidebar
