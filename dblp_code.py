@@ -14,7 +14,7 @@ from mlxtend.frequent_patterns import fpgrowth
 from mlxtend.frequent_patterns import fpcommon as fpc
 
 #read dblp dataset
-xtree = et.parse("subset10000(withSymbol).xml")
+xtree = et.parse("subset1000(withSymbol).xml")
 xroot = xtree.getroot()
 #Publications less than 30 authors
 rows = []
