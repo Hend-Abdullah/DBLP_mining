@@ -182,13 +182,13 @@ te = TransactionEncoder()
 te_ary = te.fit(Name_list).transform(Name_list)
 one_hot_encoder = pd.DataFrame(te_ary, columns=te.columns_)
 
-co_authoring = new_fpgrowth(one_hot_encoder, min_support=0.0001, use_colnames=True)
-co_authoring = co_authoring.rename(columns={'support': 'common'})
-co_authoring['length'] = co_authoring['itemsets'].apply(lambda x: len(x))
-co_authoring = co_authoring[co_authoring['length']==2]
+#co_authoring = new_fpgrowth(one_hot_encoder, min_support=0.0001, use_colnames=True)
+#co_authoring = co_authoring.rename(columns={'support': 'common'})
+#co_authoring['length'] = co_authoring['itemsets'].apply(lambda x: len(x))
+#co_authoring = co_authoring[co_authoring['length']==2]
 
-coauthor_df = pd.DataFrame(list(co_authoring['itemsets'].values),columns=['Author1', 'Author2'])
-coauthor_df['Common'] = co_authoring['common'].values
+#coauthor_df = pd.DataFrame(list(co_authoring['itemsets'].values),columns=['Author1', 'Author2'])
+#coauthor_df['Common'] = co_authoring['common'].values
 
 #standalone
 ## Page expands to full width
