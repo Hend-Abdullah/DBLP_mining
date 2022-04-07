@@ -8,7 +8,7 @@ import xml.etree.ElementTree as et
 import plotly.graph_objects as go
 import networkx as nx
 from pyvis.network import Network
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import fpgrowth
 from mlxtend.frequent_patterns import fpcommon as fpc
