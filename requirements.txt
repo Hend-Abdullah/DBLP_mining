@@ -11,36 +11,3 @@ mlxtend
 pyvis
 
 
-#visualize
-astroid==2.4.2
-Brotli==1.0.9
-click==7.1.2
-colorama==0.4.4
-dash==2.0.0
-dash-bootstrap-components==0.11.1
-dash-core-components
-dash-html-components
-dash-renderer
-dash-table
-Flask==1.1.2
-Flask-Compress
-future==0.18.2
-isort==5.7.0
-itsdangerous
-Jinja2==2.11.2
-lazy-object-proxy
-MarkupSafe
-mccabe
-numpy
-pandas
-plotly
-pylint
-python-dateutil
-pytz
-retrying
-six
-toml
-typed-ast
-visdcc
-Werkzeug
-wrapt
