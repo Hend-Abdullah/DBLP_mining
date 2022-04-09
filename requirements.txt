@@ -9,5 +9,5 @@ plotly
 networkx
 mlxtend
 pyvis
-
+version 22.0.4
 
