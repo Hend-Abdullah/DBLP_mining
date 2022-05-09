@@ -1,267 +1,136 @@
 import streamlit as st
 from PIL import Image
+import base64
 import pandas as pd
 import math
 import itertools
 import numpy as np
 import xml.etree.ElementTree as et
 import plotly.graph_objects as go
+import plotly.express as px
 import networkx as nx
 from pyvis.network import Network
-#import matplotlib.pyplot as plt
-from mlxtend.preprocessing import TransactionEncoder
-from mlxtend.frequent_patterns import fpgrowth
-from mlxtend.frequent_patterns import fpcommon as fpc
+import matplotlib.pyplot as plt
 
-#read dblp dataset
-xtree = et.parse("subset1000(withSymbol).xml")
-xroot = xtree.getroot()
-#Publications less than 30 authors
-rows = []
-#Publications with missing authors
-missing_rows = []
-#Publications with more than 30 authors
-more_30_rows =[]
-
-authors={}
-book={}
-article={}
-proceedings={}
-others={}
-
-for node in xroot:
-    #Name of journal
-    if node.find("journal") is not None:
-        journal_name=node.find("journal").text 
-    #Type of the publication                       
-    pub_type= node.tag 
-    #Title of the publication
-    if node.find("title") is not None:
-        title = node.find("title").text 
-    #Year of the publication
-    if node.find("year") is not None:
-        year = node.find("year").text
-        
-    info = {"Journal_Name" : journal_name ,"Type" :pub_type , "Title" :title , "Year" : year}  
-    
-    num_of_authors = len(node.findall("author")) 
-    #Fill three list rows, missing_rows, more_30_rows
-    if(num_of_authors == 0):
-        missing_rows.append(info)  
-    else:
-        author_list=[]
-        for x in node.findall("author")[:29]:
-            name = x.text
-            author_list.append(name)
-            if name in authors:
-                authors[name]+=1
-            else:
-                authors[name]=1
-        
-            #Initilaze  
-            if name not in article:
-                article[name]={year:0}
-                book[name]={year:0}
-                proceedings[name]={year:0}
-                others[name]={year:0}
-            #Check the publication type to increment the number of publication in a specific year  
-            if pub_type=="book":                           
-                if year in book[name]:
-                    book[name][year]+=1  
-                else:
-                    book[name][year]=1
-            elif pub_type=="inproceedings":
-                if year in proceedings[name]:
-                    proceedings[name][year]+=1  
-                else:
-                    proceedings[name][year]=1
-            elif pub_type=="article":          
-                if year in article[name]:
-                    article[name][year]+=1  
-                else:
-                    article[name][year]=1  
-            else:          
-                if year in others[name]:
-                    others[name][year]+=1  
-                else:
-                    others[name][year]=1  
-                    
-        if(num_of_authors > 30): 
-            more_30_rows.append({**info, ** {"Authors":author_list}})
-        else:
-            rows.append( {**info, ** {"Authors":author_list}})
-         
-
-# Create dataframes.
-missing_df =  pd.DataFrame(missing_rows, columns = ["Type","Title", "Year"]) 
-more_30_df =  pd.DataFrame(more_30_rows, columns = ["Type","Title", "Year","Authors"]) 
-total_pub_df = pd.DataFrame(authors.items(), columns=["Authors", "Total Publications"])
-
-df_cols =["Journal_Name","Type","Title", "Year","Authors"]
-dblp_df = pd.DataFrame(rows, columns = df_cols)
-#Career path dataframe
-publication_df =pd.DataFrame(article.items(), columns=["Authors", "Articles"])
-publication_df.loc[ : ,'Others'] = others.values()
-publication_df.loc[ : ,'Books',] = book.values()
-publication_df.loc[ : ,'Proceedings',] = proceedings.values()
-
-#Co-authoring 
-def new_fpgrowth(df, min_support=0.5, use_colnames=False, max_len=None, verbose=0):
-    
-    fpc.valid_input_check(df)
-
-    if min_support <= 0.:
-        raise ValueError('`min_support` must be a positive '
-                         'number within the interval `(0, 1]`. '
-                         'Got %s.' % min_support)
-
-    colname_map = None
-    if use_colnames:
-        colname_map = {idx: item for idx, item in enumerate(df.columns)}
-
-    tree, _ = fpc.setup_fptree(df, min_support)
-    minsup = math.ceil(min_support * len(df.index))  # min support as count
-    generator = fpg_step(tree, minsup, colname_map, max_len, verbose)
-
-    return new_generate_itemsets(generator, len(df.index), colname_map) 
-
-def new_generate_itemsets(generator, num_itemsets, colname_map):
-    itemsets = []
-    # supports = []
-    commons = []
-    for com, iset in generator:
-        itemsets.append(frozenset(iset))
-        #### before: 
-        #supports.append(com / num_itemsets)
-        #### now:
-        commons.append(com)
-
-    res_df = pd.DataFrame({'support': commons, 'itemsets': itemsets})
-
-    if colname_map is not None:
-        res_df['itemsets'] = res_df['itemsets'] \
-            .apply(lambda x: frozenset([colname_map[i] for i in x]))
-
-    return res_df
-
-
-def fpg_step(tree, minsup, colnames, max_len, verbose):
-    count = 0
-    items = tree.nodes.keys()
-    if tree.is_path():
-        # If the tree is a path, we can combinatorally generate all
-        # remaining itemsets without generating additional conditional trees
-        size_remain = len(items) + 1
-        if max_len:
-            size_remain = max_len - len(tree.cond_items) + 1
-        for i in range(1, size_remain):
-            for itemset in itertools.combinations(items, i):
-                count += 1
-                support = min([tree.nodes[i][0].count for i in itemset])
-                yield support, tree.cond_items + list(itemset)
-    elif not max_len or max_len > len(tree.cond_items):
-        for item in items:
-            count += 1
-            support = sum([node.count for node in tree.nodes[item]])
-            yield support, tree.cond_items + [item]
-
-    if verbose:
-        tree.print_status(count, colnames)
-
-    # Generate conditional trees to generate frequent itemsets one item larger
-    if not tree.is_path() and (not max_len or max_len > len(tree.cond_items)):
-        for item in items:
-            cond_tree = tree.conditional_tree(item, minsup)
-            for sup, iset in fpg_step(cond_tree, minsup,
-                                      colnames, max_len, verbose):
-                yield sup, iset
-
-Name_list = np.array(dblp_df.iloc[:, 4].values)
-
-te = TransactionEncoder()
-te_ary = te.fit(Name_list).transform(Name_list)
-one_hot_encoder = pd.DataFrame(te_ary, columns=te.columns_)
-
-#co_authoring = new_fpgrowth(one_hot_encoder, min_support=0.0001, use_colnames=True)
-#co_authoring = co_authoring.rename(columns={'support': 'common'})
-#co_authoring['length'] = co_authoring['itemsets'].apply(lambda x: len(x))
-#co_authoring = co_authoring[co_authoring['length']==2]
-
-#coauthor_df = pd.DataFrame(list(co_authoring['itemsets'].values),columns=['Author1', 'Author2'])
-#coauthor_df['Common'] = co_authoring['common'].values
-
-#standalone
-## Page expands to full width
+#Standalone
+#Page expands to full width
 st.set_page_config(layout="wide")
-#add logo
-image = Image.open('CS_miner.png')
-#st.image(image, width = 200)
-st.image(image, caption=None, width=300, use_column_width=None, clamp=False, channels="RGB", output_format="auto")
+#Add logo
+LOGO_IMAGE = "CSminer.jpg"
+
+st.markdown(
+    """
+    <style>
+    .container {
+        display: flex;
+    }
+    .logo-text {
+        font-weight:700 !important;
+        font-size:50px !important;
+        padding-top: 75px !important;
+    }
+    .logo-img {
+        float:right;
+	width: 270px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    f"""
+    <div class="container">
+        <img class="logo-img" src="data:image/png;base64,{base64.b64encode(open(LOGO_IMAGE, "rb").read()).decode()}">
+        
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 st.title(""" Who are CS miner""")
 st.subheader("Is a software that help all researcher or who are interset in computer science field to find career path and co-author relationships for a specific author or find top ten journals.")
 
 col1 = st.sidebar
 col2, col3 = st.columns((2,1))
 
-# Sidebar + Main panel
+#Sidebar + Main panel
 col1.header(" Select an Option")
 
-rad =st.sidebar.radio("",["Career Path","Co-author","Top Ten Journal"])
-if rad =="Co-author":
-    #get input from user
-    col_one_list = total_pub_df['Authors'].tolist()
-    author_name = st.selectbox("""Select Author Name""", col_one_list)
-    coauthor_list = []
-    common_list = []
+#Radio button
+button =st.sidebar.radio("",["Career Path","Co-author","Top Ten Journal"])
 
+Co_author_flag= False
+if button =="Co-author":
+    if Co_author_flag==0:
+	 #Read Files
+         publication_df=pd.read_pickle("./publication_df.pkl")
+	 #List of authors name
+         col_one_list = publication_df["Authors"].tolist()
+         coauthor_df=pd.read_pickle("./coauthor_df.pkl")
+         Co_author_flag = True
+    #get input from user
+    name = st.selectbox("""Select Author Name""", col_one_list)
+
+    #Check if the entered author in Author1 column or Author2 column for the visualization
     coauthor_list1 = coauthor_df[(coauthor_df['Author1'] == name)].Author2.values.tolist()
     common_list1 = coauthor_df[(coauthor_df['Author1'] == name)].Common.values.tolist()
-
     coauthor_list2 = coauthor_df[(coauthor_df['Author2'] == name)].Author1.values.tolist()
     common_list2= coauthor_df[(coauthor_df['Author2'] == name)].Common.values.tolist()
 
     coauthor_list = coauthor_list1+ coauthor_list2
     common_list = common_list1+ common_list2
-    
-    HtmlFile = open("test.html", 'r', encoding='utf-8')
-    source_code = HtmlFile.read() 
-    components.html(source_code, height = 900,width=900)
-    
-    net = Network()
-    net.add_node(0,label=name )
-    net.add_nodes([i for i in range(1,len(coauthor_list)+1)], 
-              label=coauthor_list,
-              color= ['blue' for i in range(len(coauthor_list))], 
-              title = [('# common publications: %d'%i) for i in common_list],
-              size= (np.array(common_list)*20).tolist() )
+    coauthor_list.insert(0,name)
+    common_list.insert(0,100)
 
-    net.add_edges([(0,i) for i in range(1,len(coauthor_list)+1)])
-    net.repulsion(node_distance=90, spring_length=200)
-    net.show('test.html')
-    from IPython.core.display import display, HTML
-    display(HTML('test.html'))
+    #non-interactive visualization
+    G=nx.Graph()
+    fig = plt.figure(figsize = (30, 20))
+    plt.margins(0.3)
+    plt.title(name+' Co-author\'s', fontsize=18)
+    common_list_count=0
+    for i in range(len(coauthor_list)):
+        G.add_edge(coauthor_list[i],name, weight=common_list[common_list_count])
+        common_list_count+=1
+    pos=nx.spring_layout(G)
+    limits = plt.axis("off")  
+    colors=['#F16A70' for i in range(len(coauthor_list)-1)]
+    colors.insert(0,'lightskyblue')
+    nx.draw_networkx(G,pos,with_labels=True,node_size=[i * 30 for i in common_list], node_color=colors,linewidths=1.97,width=1,font_size=12)
+    nx.draw_networkx_edge_labels(G,pos,edge_labels=nx.get_edge_attributes(G,'weight'))
+    st.pyplot(fig)
 
-if rad =="Career Path":
+Career_flag=False   
+if button =="Career Path":
+    if Career_flag==False:
+	 #Read Files
+         publication_df=pd.read_pickle("./publication_df.pkl")
+	 #List of authors name
+         col_one_list = publication_df["Authors"].tolist()
+         Career_flag = True
+	 
     #get input from user
-    col_one_list = total_pub_df['Authors'].tolist()
     author_name = st.selectbox("""Select Author Name""", col_one_list)
+
     #Get all index in publication_df
     index = publication_df.index
     #Find index for input author
     author_index = index[publication_df["Authors"] == author_name]
+
     #Return data for each type for the input author
     article_data=publication_df.iloc[author_index[0]]['Articles']
     book_data=publication_df.iloc[author_index[0]]['Books']
-    proceedings_data=publication_df.iloc[author_index[0]]['Proceedings']
-    others_data=publication_df.iloc[author_index[0]]['Others']
-    #Return all years
-    Year = list(article_data.keys())
+    conference_data=publication_df.iloc[author_index[0]]['Conferenece']
+    collections_data=publication_df.iloc[author_index[0]]['Collections']
+    Informal_and_Others_data=publication_df.iloc[author_index[0]]['Informal and Others']
+    
     #Visualize the career path of the input author
-    fig1 = go.Figure(go.Bar(x=Year, y=list(article_data.values()) ,  marker_color='#DC143C',name='Articles',width=0.6))
-    fig1.add_trace(go.Bar(x=Year, y=list(book_data.values()),marker_color='lightblue', name='Books',width=0.6))
-    fig1.add_trace(go.Bar(x=Year, y=list(proceedings_data.values()),marker_color='#A8E4A0', name='Proceedings',width=0.6))
-    fig1.add_trace(go.Bar(x=Year, y=list(others_data.values()),marker_color='lightslategrey', name='Others',width=0.6))
-    fig1.update_layout(barmode='stack',  title='Career Path',
+    fig1 = go.Figure(go.Bar(x=list(article_data.keys()), y=list(article_data.values()), marker_color='#B24F73',name='Articles',width=0.6))
+    fig1.add_trace(go.Bar(x=list(book_data.keys()), y=list(book_data.values()),marker_color='#90A7C5', name='Books',width=0.6))
+    fig1.add_trace(go.Bar(x=list(conference_data.keys()), y=list(conference_data.values()),marker_color='#C3E0D0', name='Conferences',width=0.6))
+    fig1.add_trace(go.Bar(x=list(collections_data.keys()), y=list(collections_data.values()),marker_color='#9999CC', name='Collections',width=0.6))
+    fig1.add_trace(go.Bar(x=list(Informal_and_Others_data.keys()), y=list(Informal_and_Others_data.values()),marker_color='silver', name='Informal and Other Publications',width=0.6))
+
+    fig1.update_layout(barmode='stack',  title="%s's Career Path"%(author_name),
         title_x=0.5,
         font_family="sans-serif",
         font_size=14,
@@ -273,43 +142,73 @@ if rad =="Career Path":
         xaxis=dict(
         titlefont_size=16,
         tickfont_size=14,
-    categoryorder='category ascending'))
+        categoryorder='category ascending'))
     st.plotly_chart(fig1, use_container_width=True)
-    
-if rad =="Top Ten Journal":
-    #Top ten journal
-    top=dblp_df[((dblp_df.Year>='1990')& (dblp_df.Type=='article'))].Journal_Name
-    top_10=top.value_counts()[:10].sort_values(ascending=False)
+
+    #Second visualize
+    visualise = publication_df.iloc[author_index[0]]['Top Journals']
+    if None in visualise.keys():
+    	visualise.pop(None)
+
+    data_items = visualise.items()
+    data_list = list(data_items)
+    df = pd.DataFrame(data_list)
+    df.columns = ['Journal Name', 'Number of publication']
+
+    titles = "%s's Top Journals"%(author_name)
+    colors=["#9999CC", "#C3E0D0", "#90A7C5", "#B24F73", "silver"]
+    fig2 = px.pie(df,names='Journal Name', values='Number of publication', title= titles)
+    fig2.update_layout(
+        title=titles,
+        title_x=0.5,
+        font_family="arial",
+        font_size=16,
+        font_color="black",
+        titlefont_size=24,
+        title_font_family="arial",
+        title_font_color="black")
+    fig2.update_traces(marker=dict(colors=colors))
+    st.plotly_chart(fig2, use_container_width=True)
+
+
+Top_flag=False
+if button =="Top Ten Journal":
+    if Top_flag==False:
+	   #Read Files
+           top_10=pd.read_pickle("./top_10.pkl")
+           Top_flag=True
 
     #Visualize top ten journals
-    information=['Name:'+top_10.index[0]+'<br>Impact Factor: 11'+'<br>Quadratic: Q1'
-             ,'Name:'+top_10.index[1]+'<br>Impact Factor: 11'+'<br>Quadratic: Q1',
-            'Name:'+top_10.index[2]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[3]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[4]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[5]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[6]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[7]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[8]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1',
-            'Name:'+top_10.index[9]+'<br>Impact Factor: 11'+'<br>Quadratic Number: Q1']
+    information=['Name: IEEE Access'+'<br>Impact Factor: 4.48'+'<br>Quartile: <br>Computer Science (miscellaneous) (Q1); <br>Engineering (miscellaneous) (Q1); <br>Materials Science (miscellaneous) (Q2)',
+                'Name: Sensors'+'<br>Impact Factor: 4.35'+'<br>Quartile: <br>Analytical Chemistry (Q2); <br>Atomic and Molecular Physics, and Optics (Q2); <br>Electrical and Electronic Engineering (Q2); <br>Information Systems (Q2); <br>Instrumentation (Q2); <br>Medicine (miscellaneous) (Q2); <br>Biochemistry (Q3).',
+                'Name: Remote Sensing '+'<br>Impact Factor: 5.33'+'<br>Quartile: <br>Earth and Planetary Sciences (miscellaneous) (Q1)',
+                'Name: Neurocomputing'+'<br>Impact Factor: 5.719'+'<br>Quartile: <br>Artificial Intelligence (Q1); <br>Computer Science Applications (Q1); <br>Cognitive Neuroscience (Q2)',
+                'Name: Multimedia Tools And Applications Ranking'+'<br>Impact Factor: 2.757'+'<br>Quartile: <br>Media Technology (Q1); <br>Computer Networks and Communications (Q2); <br>Hardware and Architecture (Q2); <br>Software (Q2)',
+                'Name: NeuroImage'+'<br>Impact Factor: 6.82'+'<br>Quartile: <br>Neuroscience (Q1); <br>Neurology (Q1);',
+                'Name: Applied Mathematics and Computation'+'<br>Impact Factor: 4.31'+'<br>Quartile: <br>Applied Mathematics (Q1); <br>Computational Mathematics (Q1)',
+                'Name: IEEE Transactions on Industrial Electronics'+'<br>Impact Factor: 9.59'+'<br>Quartile: <br>Computer Science Applications (Q1); <br>Control and Systems Engineering (Q1); <br>Electrical and Electronic Engineering (Q1)',
+                'Name: Expert Systems with Applications'+'<br>Impact Factor: 6.954'+'<br>Quartile: <br>Artificial Intelligence (Q1); <br>Computer Science Applications (Q1); <br>Engineering (miscellaneous) (Q1);',
+                'Name: IEEE Transactions on Vehicular Technology'+'<br>Impact Factor: 7.8'+'<br>Quartile: <br>Aerospace Engineering (Q1); <br>Applied Mathematics (Q1); <br>Automotive Engineering (Q1); <br>Computer Networks and Communications (Q1); <br>Electrical and Electronic Engineering (Q1)']
 
-    fig2 = go.Figure(data=[go.Scatter(
-        x=top_10.values,
-        y=[10,11,12,13,15,17,19,21,23,25],
-        text=information,
-        mode='markers',
-        marker=dict(
-        #Impact factor 
-        color=['Navy','MediumBlue','Blue','CornflowerBlue','DodgerBlue', 'LightSkyBlue','LightBlue', 'LightSteelBlue','silver','lightgray'],
-        size=top_10.values/20
-        )
-        )])
-    fig2.update_layout(
-        title='Top Ten Journals',
-        title_x=0.5,
-        font_family="sans-serif",
-        font_size=14,
-        font_color="black",
-        xaxis=dict(
-            title='Number of Publication',))
-    st.plotly_chart(fig2, use_container_width=True)
+    fig = go.Figure(data=[go.Scatter(
+            x=top_10.values,
+            y=[1,3,5,1,3,5,1,3,5,1],
+            text=information,
+            mode='markers',
+            marker=dict(
+            #Impact factor 
+	    color=['LightBlue', 'LightSteelBlue', 'LightSkyBlue', 'DodgerBlue', 'lightgray', 'CornflowerBlue', 'silver', 'Navy','Blue','MediumBlue'],
+            #color=['Navy','MediumBlue','Blue','CornflowerBlue','DodgerBlue', 'LightSkyBlue','LightBlue', 'LightSteelBlue','silver','lightgray'],
+            size=top_10.values/300))])
+
+
+    fig.update_layout(
+            title='Top Ten Journals',
+            title_x=0.5,
+            font_family="sans-serif",
+            font_size=14,
+            font_color="black",
+            xaxis=dict(
+            title='Number of Publication',),
+            yaxis=dict(visible= False,))
+    st.plotly_chart(fig, use_container_width=True)
